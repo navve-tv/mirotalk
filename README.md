@@ -1,4 +1,4 @@
-# Mirotalk
+# MiroTalk
 
 🚀 `A free WebRTC browser-based video call, chat and screen sharing` 🚀
 
@@ -6,17 +6,17 @@
 
 [//]: https://img.shields.io/badge/<LABEL>-<MESSAGE>-<COLOR>
 
-[![Author](https://img.shields.io/badge/Author-miro-brightgreen.svg)](https://www.linkedin.com/in/miroslav-pejic-976a07101/)
-![License: CC-NC](https://img.shields.io/badge/License-CCNC-blue.svg)
+[![Author](https://img.shields.io/badge/Author-Miroslav-brightgreen.svg)](https://www.linkedin.com/in/miroslav-pejic-976a07101/)
+![License: CC-NC](https://img.shields.io/badge/License-AGPLv3-blue.svg)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-brightgreen.svg)](https://paypal.me/MiroslavPejic?locale.x=it_IT)
 [![Repo Link](https://img.shields.io/badge/Repo-Link-black.svg)](https://github.com/miroslavpejic85/mirotalk)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?)](https://github.com/prettier/prettier)
+[![Code style: prettier](https://img.shields.io/badge/Code_style-Prettier-ff69b4.svg?)](https://github.com/prettier/prettier)
 [![Gitter](https://badges.gitter.im/mirotalk/community.svg)](https://gitter.im/mirotalk/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Discord](https://img.shields.io/badge/chat-discord-green)](https://discord.gg/c5AZn8yKbQ)
+[![Discord](https://img.shields.io/badge/Chat-Discord-green)](https://discord.gg/TAeWXJCvBr)
 
-Powered by `WebRTC` using google Stun and [numb](http://numb.viagenie.ca/) Turn. `Mirotalk` provides video quality and latency not available with traditional technology.
+Powered by `WebRTC` using google Stun and [numb](http://numb.viagenie.ca/) Turn. `MiroTalk` provides video quality and latency not available with traditional technology.
 
-Open the app in one of following **supported browser**
+Open the app with the following **supported browsers** & many more...
 
 [//]: #![webrtc](www/images/webrtc.png)
 
@@ -30,87 +30,100 @@ Open the app in one of following **supported browser**
 
 ## Features
 
-- Is `100% Free` and `Open Source`
-- No download, plug-in or login required, entirely browser based
-- Unlimited users, without time limitation
-- Optimized Room Url Sharing (share it to your participants, wait them to join)
-- WebCam Streaming (Front - Rear for mobile)
-- Audio Streaming
-- Screen Sharing to present documents, slides, and more...
-- File Sharing, share the files to your participants in the room
-- Select Audio Input - Output && Video source
-- Recording your Screen, Audio and Video
-- Chat with Emoji Picker & Private messages & Save the conversations
-- Simple Whiteboard for the teachers
-- Full Screen Mode on mouse click on the Video element
-- Possibility to Change UI Themes
-- Right click on the Video elements for more options
-- Direct `peer-to-peer` connection ensures lowest latency thanks to `webrtc`
+-   Is `100% Free` and `Open Source`
+-   No download, plug-in or login required, entirely browser based
+-   Unlimited number of conference rooms without call time limitation
+-   Desktop and Mobile compatible
+-   Optimized Room URL Sharing (share it to your participants, wait them to join)
+-   Webcam Streaming (Front - Rear for mobile)
+-   Audio Streaming crystal clear
+-   Screen Sharing to present documents, slides, and more...
+-   File Sharing, share any files to your participants in the room
+-   Select Audio Input - Output && Video source
+-   Ability to set video quality up to 4K and adapt the FPS
+-   Recording your Screen, Audio and Video
+-   Chat with Emoji Picker & Private messages & Save the conversations
+-   Simple collaborative whiteboard for the teachers
+-   Share any YouTube video in real time
+-   Full Screen Mode on mouse click on the Video element
+-   Possibility to Change UI Themes
+-   Right-click on the Video elements for more options
+-   Direct `peer-to-peer` connection ensures the lowest latency thanks to `WebRTC`
+-   Supports [REST API](api/README.md) (Application Programming Interface)
 
 ## Demo
 
-- `Open` https://mirotalk.herokuapp.com/newcall `or` https://mirotalk.up.railway.app/newcall
-- `Pick` your personal Room name and `Join To Room`
-- `Allow` to use the camera and microphone
-- `Share` the Room URL and `Wait` someone to join for video conference
+-   `Open` https://mirotalk.up.railway.app/newcall `or` https://mirotalk.herokuapp.com/newcall
+-   `Pick` your personal Room name and `Join To Room`
+-   `Allow` to use the camera and microphone
+-   `Share` the Room URL and `Wait` someone to join for video conference
 
-## Room name
+## Room join
 
-- You can also `join` directly to your room name by going to https://mirotalk.herokuapp.com/join/your-room-name-goes-here `or` https://mirotalk.up.railway.app/join/your-room-name-goes-here
+-   You can also `join` directly to your `room` by going to https://mirotalk.up.railway.app/join/your-room-name-goes-here `or` https://mirotalk.herokuapp.com/join/your-room-name-goes-here
 
 ## Quick start
 
-- You will need to have [Node.js](https://nodejs.org/it/) installed, this project has been tested with Node version 12.X
-- Clone this repo
+-   You will need to have [Node.js](https://nodejs.org/en/blog/release/v12.22.1/) installed, this project has been tested with Node version `12.X` and `14.X`
 
 ```bash
-git clone git@github.com:miroslavpejic85/mirotalk.git
+# clone this repo
+git clone https://github.com/miroslavpejic85/mirotalk.git
+
+# mirotalk dir
 cd mirotalk
-```
 
-## Setup Turn and Ngrok
-
-- Copy .env.template to .env
-
-```bash
+# copy .env.template to .env
 cp .env.template .env
-```
 
-`Turn`
-
-Not mandatory but recommended.
-
-- Create an account on http://numb.viagenie.ca
-- Get your Account USERNAME and PASSWORD
-- Fill in your credentials in the `.env` file
-- Set `TURN_ENABLED=true`, if you want enable the Turn Server.
-
-`Ngrok`
-
-Not mandatory at all, but useful for tests and debug.
-
-- Get started for free https://ngrok.com/
-- Fill in your authtoken in the `.env` file
-- Set `NGROK_ENABLED=true`, if you want to expose the server using the https tunnel, starting it from your local PC.
-
-## Install dependencies
-
-```js
+# install dependencies
 npm install
-```
 
-## Start the server
-
-```js
+# start the server
 npm start
 ```
 
-- Open http://localhost:3000 in browser
+-   Open http://localhost:3000 in browser
 
 ---
 
-If you want to use a client on another computer/network, make sure you publish your server on an `HTTPS` connection.
-You can use a service like [ngrok](https://ngrok.com/) or deploy it on:
+## Docker
+
+```bash
+# copy .env.template to .env
+cp .env.template .env
+
+# build or rebuild services
+docker compose build
+
+# create and start containers
+docker compose up # -d
+
+# stop and remove resources
+docker compose down
+```
+
+-   Open http://localhost:3000 in browser
+
+---
+
+## API
+
+The `response` will give you a `entrypoint / Room URL` for `your meeting`, where `authorization: API_KEY_SECRET`.
+
+```bash
+curl -X POST "http://localhost:3000/api/v1/meeting" -H "authorization: mirotalk_default_secret" -H "Content-Type: application/json"
+curl -X POST "https://mirotalk.up.railway.app/api/v1/meeting" -H "authorization: mirotalk_default_secret" -H "Content-Type: application/json"
+curl -X POST "https://mirotalk.herokuapp.com/api/v1/meeting" -H "authorization: mirotalk_default_secret" -H "Content-Type: application/json"
+```
+
+## API Documentation
+
+The API documentation uses [swagger](https://swagger.io/) at http://localhost:3000/api/v1/docs. Or check it out on [railway](https://mirotalk.up.railway.app/api/v1/docs) & [heroku](https://mirotalk.herokuapp.com/api/v1/docs).
+
+---
+
+If you want `MiroTalk` to be `reachable` from the `outside` of your local network, you can use a service like [ngrok](https://ngrok.com/) (by editing the `Ngrok` part on `.env` file) or expose it directly on [https](ssl/README.md) or deploy it on:
 
 <br>
 
@@ -118,7 +131,7 @@ You can use a service like [ngrok](https://ngrok.com/) or deploy it on:
 
 `demo` https://mirotalk.herokuapp.com/
 
-![heroku-qr](www/images/mirotalk-heroku-qr.png)
+[![heroku-qr](www/images/mirotalk-heroku-qr.png)](https://mirotalk.herokuapp.com/)
 
 <br>
 
@@ -126,7 +139,7 @@ You can use a service like [ngrok](https://ngrok.com/) or deploy it on:
 
 `demo` https://mirotalk.up.railway.app/
 
-![railway-qr](www/images/mirotalk-railway-qr.png)
+[![railway-qr](www/images/mirotalk-railway-qr.png)](https://mirotalk.up.railway.app/)
 
 ---
 
@@ -134,20 +147,25 @@ You can use a service like [ngrok](https://ngrok.com/) or deploy it on:
 
 Many Thanks to:
 
-- ianramzy (html template)
-- vasanthv (webrtc)
-- Sajad (chat)
-- i-aryan (whiteboard)
+-   ianramzy (html [template](https://cruip.com/demos/neon/))
+-   vasanthv (webrtc)
+-   Sajad (chat)
+-   i-aryan (whiteboard)
+-   fmeringdal (rest api)
 
 From where I took inspiration for this project. ❤️
 
 ## Contributing
 
-- Pull Requests are welcome! :slightly_smiling_face:
-- Please run [prettier](https://prettier.io) on all of your PRs before submitting, this can be done with `prettier --write mirotalk/`
-- For communication we use [gitter](https://gitter.im/) or [discord](https://discord.com/) chats which can be found here:
+-   Pull Requests are very welcome! :slightly_smiling_face:
+-   Just run [prettier](https://prettier.io) on all of your PRs before submitting, this can be done with `npx prettier --write .`
+-   For communication we use [gitter](https://gitter.im/) or [discord](https://discord.com/) chats which can be found here:
 
-[![Gitter](https://badges.gitter.im/mirotalk/community.svg)](https://gitter.im/mirotalk/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Discord](https://img.shields.io/badge/chat-discord-green)](https://discord.gg/c5AZn8yKbQ)
+[![Gitter](https://badges.gitter.im/mirotalk/community.svg)](https://gitter.im/mirotalk/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Discord](https://img.shields.io/badge/chat-discord-green)](https://discord.gg/TAeWXJCvBr)
+
+## License
+
+[![AGPLv3](www/images/AGPLv3.png)](LICENSE)
 
 ---
 
