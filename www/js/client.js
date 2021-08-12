@@ -42,6 +42,7 @@ const camOffImg = '../images/cam-off.png';
 const audioOffImg = '../images/audio-off.png';
 const deleteImg = '../images/delete.png';
 const youtubeImg = '../images/youtube.png';
+const messageImg = '../images/message.png';
 const kickedOutImg = '../images/leave-room.png';
 const aboutImg = '../images/about.png';
 
@@ -467,7 +468,7 @@ function setButtonsTitle() {
         content: 'Close the videoPlayer',
     });
     tippy(msgerVideoUrlBtn, {
-        content: 'Share Youtube video',
+        content: 'Share YouTube video to all participants',
     });
 }
 
@@ -640,7 +641,6 @@ function whoAreYou() {
 
             document.body.style.backgroundImage = 'none';
             myVideoWrap.style.display = 'inline';
-
             logStreamSettingsInfo('localMediaStream', localMediaStream);
             attachMediaStream(myVideo, localMediaStream);
             resizeVideos();
@@ -1294,6 +1294,8 @@ function loadRemoteMediaStream(stream, peers, peer_id) {
     const remoteHandStatusIcon = document.createElement('button');
     const remoteVideoStatusIcon = document.createElement('button');
     const remoteAudioStatusIcon = document.createElement('button');
+    const remotePrivateMsgBtn = document.createElement('button');
+    const remoteYoutubeBtnBtn = document.createElement('button');
     const remotePeerKickOut = document.createElement('button');
     const remoteVideoFullScreenBtn = document.createElement('button');
     const remoteVideoAvatarImage = document.createElement('img');
@@ -1331,6 +1333,18 @@ function loadRemoteMediaStream(stream, peers, peer_id) {
     tippy(remoteAudioStatusIcon, {
         content: 'Participant audio is ON',
     });
+    // remote peer YouTube video
+    remoteYoutubeBtnBtn.setAttribute('id', peer_id + '_youtube');
+    remoteYoutubeBtnBtn.className = 'fab fa-youtube';
+    tippy(remoteYoutubeBtnBtn, {
+        content: 'Send YouTube video',
+    });
+    // remote private message
+    remotePrivateMsgBtn.setAttribute('id', peer_id + '_privateMsg');
+    remotePrivateMsgBtn.className = 'fas fa-paper-plane';
+    tippy(remotePrivateMsgBtn, {
+        content: 'Send private message',
+    });
     // remote peer kick out
     remotePeerKickOut.setAttribute('id', peer_id + '_kickOut');
     remotePeerKickOut.className = 'fas fa-sign-out-alt';
@@ -1353,6 +1367,8 @@ function loadRemoteMediaStream(stream, peers, peer_id) {
     remoteStatusMenu.appendChild(remoteHandStatusIcon);
     remoteStatusMenu.appendChild(remoteVideoStatusIcon);
     remoteStatusMenu.appendChild(remoteAudioStatusIcon);
+    remoteStatusMenu.appendChild(remoteYoutubeBtnBtn);
+    remoteStatusMenu.appendChild(remotePrivateMsgBtn);
     remoteStatusMenu.appendChild(remotePeerKickOut);
     remoteStatusMenu.appendChild(remoteVideoFullScreenBtn);
 
@@ -1378,7 +1394,7 @@ function loadRemoteMediaStream(stream, peers, peer_id) {
     // resize video elements
     resizeVideos();
     // handle video full screen mode
-    handleVideoPlayerFs(peer_id + '_video', peer_id + '_fullScreen');
+    handleVideoPlayerFs(peer_id + '_video', peer_id + '_fullScreen', peer_id);
     // handle kick out button event
     handlePeerKickOutBtn(peer_id);
     // refresh remote peers avatar name
@@ -1389,6 +1405,14 @@ function loadRemoteMediaStream(stream, peers, peer_id) {
     setPeerVideoStatus(peer_id, peer_video);
     // refresh remote peers audio icon status and title
     setPeerAudioStatus(peer_id, peer_audio);
+    // handle remote peers audio on-off
+    handlePeerAudioBtn(peer_id);
+    // handle remote peers video on-off
+    handlePeerVideoBtn(peer_id);
+    // handle remote private messages
+    handlePeerPrivateMsg(peer_id, peer_name);
+    // handle remote youtube video
+    handlePeerYouTube(peer_id);
     // show status menu
     toggleClassElements('statusMenu', 'inline');
     // notify if peer started to recording own screen + audio
@@ -1468,8 +1492,9 @@ function setPeerChatAvatarImgName(avatar, peerName) {
  *
  * @param {*} videoId
  * @param {*} videoFullScreenBtnId
+ * @param {*} peer_id
  */
-function handleVideoPlayerFs(videoId, videoFullScreenBtnId) {
+function handleVideoPlayerFs(videoId, videoFullScreenBtnId, peer_id = null) {
     let videoPlayer = getId(videoId);
     let videoFullScreenBtn = getId(videoFullScreenBtnId);
 
@@ -1497,21 +1522,44 @@ function handleVideoPlayerFs(videoId, videoFullScreenBtnId) {
         }
     });
 
-    // on button click go on FS
+    // on button click go on FS mobile/desktop
     videoFullScreenBtn.addEventListener('click', (e) => {
-        handleFSVideo();
+        gotoFS();
     });
 
     // on video click go on FS
     videoPlayer.addEventListener('click', (e) => {
         // not mobile on click go on FS or exit from FS
         if (!isMobileDevice) {
-            handleFSVideo();
+            gotoFS();
         } else {
             // mobile on click exit from FS, for enter use videoFullScreenBtn
             if (isVideoOnFullScreen) handleFSVideo();
         }
     });
+
+    function gotoFS() {
+        // handle remote peer video fs
+        if (peer_id !== null) {
+            let remoteVideoStatusBtn = getId(peer_id + '_videoStatus');
+            if (remoteVideoStatusBtn.className === 'fas fa-video') {
+                handleFSVideo();
+            } else {
+                showMsg();
+            }
+        } else {
+            // handle local video fs
+            if (myVideoStatusIcon.className === 'fas fa-video') {
+                handleFSVideo();
+            } else {
+                showMsg();
+            }
+        }
+    }
+
+    function showMsg() {
+        userLog('toast', 'Full screen mode work when video is on');
+    }
 
     function handleFSVideo() {
         // if Controls enabled, or document on FS do nothing
@@ -2779,7 +2827,7 @@ function handleMediaRecorder(mediaRecorder) {
 function handleMediaRecorderStart(event) {
     playSound('recStart');
     if (isRecScreenSream) {
-        emitPeerAction('recStart');
+        emitPeersAction('recStart');
         emitPeerStatus('rec', isRecScreenSream);
     }
     console.log('MediaRecorder started: ', event);
@@ -2821,7 +2869,7 @@ function handleMediaRecorderStop(event) {
             if (track.kind === 'video') track.stop();
         });
         isRecScreenSream = false;
-        emitPeerAction('recStop');
+        emitPeersAction('recStop');
         emitPeerStatus('rec', isRecScreenSream);
     }
     setRecordButtonUi();
@@ -3383,6 +3431,7 @@ function setMyAudioStatus(status) {
     tippy(myAudioStatusIcon, {
         content: status ? 'My audio is ON' : 'My audio is OFF',
     });
+    status ? playSound('on') : playSound('off');
     // only for desktop
     if (!isMobileDevice) {
         tippy(audioBtn, {
@@ -3405,6 +3454,7 @@ function setMyVideoStatus(status) {
     tippy(myVideoStatusIcon, {
         content: status ? 'My video is ON' : 'My video is OFF',
     });
+    status ? playSound('on') : playSound('off');
     // only for desktop
     if (!isMobileDevice) {
         tippy(videoBtn, {
@@ -3464,6 +3514,80 @@ function setPeerAudioStatus(peer_id, status) {
     tippy(peerAudioStatus, {
         content: status ? 'Participant audio is ON' : 'Participant audio is OFF',
     });
+    status ? playSound('on') : playSound('off');
+}
+
+/**
+ * Mute Audio to specific user in the room
+ * @param {*} peer_id
+ */
+function handlePeerAudioBtn(peer_id) {
+    let peerAudioBtn = getId(peer_id + '_audioStatus');
+    peerAudioBtn.onclick = () => {
+        if (peerAudioBtn.className === 'fas fa-microphone') disablePeer(peer_id, 'audio');
+    };
+}
+
+/**
+ * Hide Video to specific user in the room
+ * @param {*} peer_id
+ */
+function handlePeerVideoBtn(peer_id) {
+    let peerVideoBtn = getId(peer_id + '_videoStatus');
+    peerVideoBtn.onclick = () => {
+        if (peerVideoBtn.className === 'fas fa-video') disablePeer(peer_id, 'video');
+    };
+}
+
+/**
+ * Send Private Message to specific peer
+ * @param {*} peer_id
+ * @param {*} toPeerName
+ */
+function handlePeerPrivateMsg(peer_id, toPeerName) {
+    let peerPrivateMsg = getId(peer_id + '_privateMsg');
+    peerPrivateMsg.onclick = (e) => {
+        e.preventDefault();
+        Swal.fire({
+            background: swalBackground,
+            position: 'center',
+            imageUrl: messageImg,
+            title: 'Send private message',
+            input: 'text',
+            showCancelButton: true,
+            confirmButtonText: `Send`,
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown',
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp',
+            },
+        }).then((result) => {
+            if (result.value) {
+                let pMsg = result.value;
+                emitMsg(myPeerName, toPeerName, pMsg, true);
+                appendMessage(
+                    myPeerName,
+                    rightChatAvatar,
+                    'right',
+                    pMsg + '<br/><hr>Private message to ' + toPeerName,
+                    true,
+                );
+                userLog('toast', 'Message sent to ' + toPeerName + ' 👍');
+            }
+        });
+    };
+}
+
+/**
+ * Send YouTube video to specific peer
+ * @param {*} peer_id
+ */
+function handlePeerYouTube(peer_id) {
+    let peerYoutubeBtn = getId(peer_id + '_youtube');
+    peerYoutubeBtn.onclick = () => {
+        sendVideoUrl(peer_id);
+    };
 }
 
 /**
@@ -3479,17 +3603,35 @@ function setPeerVideoStatus(peer_id, status) {
     tippy(peerVideoStatus, {
         content: status ? 'Participant video is ON' : 'Participant video is OFF',
     });
+    status ? playSound('on') : playSound('off');
 }
 
 /**
  * Emit actions to all peers in the same room except yourself
  * @param {*} peerAction muteAudio hideVideo start/stop recording ...
  */
-function emitPeerAction(peerAction) {
+function emitPeersAction(peerAction) {
     if (!thereIsPeerConnections()) return;
 
     sendToServer('peerAction', {
         room_id: roomId,
+        peer_name: myPeerName,
+        peer_id: null,
+        peer_action: peerAction,
+    });
+}
+
+/**
+ * Emit actions to specified peers in the same room
+ * @param {*} peer_id
+ * @param {*} peerAction
+ */
+function emitPeerAction(peer_id, peerAction) {
+    if (!thereIsPeerConnections()) return;
+
+    sendToServer('peerAction', {
+        room_id: roomId,
+        peer_id: peer_id,
         peer_name: myPeerName,
         peer_action: peerAction,
     });
@@ -3522,13 +3664,14 @@ function handlePeerAction(config) {
 /**
  * Set my Audio off and Popup the peer name that performed this action
  */
-function setMyAudioOff() {
+function setMyAudioOff(peer_name) {
     if (myAudioStatus === false) return;
     localMediaStream.getAudioTracks()[0].enabled = false;
     myAudioStatus = localMediaStream.getAudioTracks()[0].enabled;
     audioBtn.className = 'fas fa-microphone-slash';
     setMyAudioStatus(myAudioStatus);
     userLog('toast', peer_name + ' has disabled your audio');
+    playSound('off');
 }
 
 /**
@@ -3541,6 +3684,7 @@ function setMyVideoOff(peer_name) {
     videoBtn.className = 'fas fa-video-slash';
     setMyVideoStatus(myVideoStatus);
     userLog('toast', peer_name + ' has disabled your video');
+    playSound('off');
 }
 
 /**
@@ -3575,11 +3719,55 @@ function disableAllPeers(element) {
             switch (element) {
                 case 'audio':
                     userLog('toast', 'Mute everyone 👍');
-                    emitPeerAction('muteAudio');
+                    emitPeersAction('muteAudio');
                     break;
                 case 'video':
                     userLog('toast', 'Hide everyone 👍');
-                    emitPeerAction('hideVideo');
+                    emitPeersAction('hideVideo');
+                    break;
+            }
+        }
+    });
+}
+
+/**
+ * Mute or Hide specific peer
+ * @param {*} peer_id
+ * @param {*} element audio/video
+ */
+function disablePeer(peer_id, element) {
+    if (!thereIsPeerConnections()) {
+        userLog('info', 'No participants detected');
+        return;
+    }
+    Swal.fire({
+        background: swalBackground,
+        position: 'center',
+        imageUrl: element == 'audio' ? audioOffImg : camOffImg,
+        title: element == 'audio' ? 'Mute this participant?' : 'Hide this participant?',
+        text:
+            element == 'audio'
+                ? "Once muted, you won't be able to unmute them, but they can unmute themselves at any time."
+                : "Once hided, you won't be able to unhide them, but they can unhide themselves at any time.",
+        showDenyButton: true,
+        confirmButtonText: element == 'audio' ? `Mute` : `Hide`,
+        denyButtonText: `Cancel`,
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown',
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp',
+        },
+    }).then((result) => {
+        if (result.isConfirmed) {
+            switch (element) {
+                case 'audio':
+                    userLog('toast', 'Mute audio 👍');
+                    emitPeerAction(peer_id, 'muteAudio');
+                    break;
+                case 'video':
+                    userLog('toast', 'Hide video 👍');
+                    emitPeerAction(peer_id, 'hideVideo');
                     break;
             }
         }
@@ -4215,16 +4403,17 @@ function saveBlobToFile(blob, file) {
 
 /**
  * Opend and send Video URL to all peers in the room
+ *
  */
-function sendVideoUrl() {
+function sendVideoUrl(peer_id = null) {
     playSound('newMessage');
 
     Swal.fire({
         background: swalBackground,
         position: 'center',
         imageUrl: youtubeImg,
-        title: 'Share Youtube Video',
-        text: 'Past youtube video URL',
+        title: 'Share YouTube Video',
+        text: 'Past YouTube video URL',
         input: 'text',
         showCancelButton: true,
         confirmButtonText: `Share`,
@@ -4241,7 +4430,10 @@ function sendVideoUrl() {
                 return;
             }
             console.log('Video URL: ' + result.value);
-            let config = { video_src: result.value };
+            let config = {
+                video_src: result.value,
+                peer_id: peer_id,
+            };
             openVideoUrlPlayer(config);
             emitVideoPlayer('open', config);
         }
@@ -4302,6 +4494,7 @@ function emitVideoPlayer(video_action, config = {}) {
         peer_name: myPeerName,
         video_action: video_action,
         video_src: config.video_src,
+        peer_id: config.peer_id,
     });
 }
 
@@ -4637,8 +4830,8 @@ function userLog(type, message) {
  */
 async function playSound(name) {
     if (!notifyBySound) return;
-    let file_audio = '../audio/' + name + '.mp3';
-    let audioToPlay = new Audio(file_audio);
+    let sound = '../sounds/' + name + '.mp3';
+    let audioToPlay = new Audio(sound);
     try {
         await audioToPlay.play();
     } catch (err) {

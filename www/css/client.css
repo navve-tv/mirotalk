@@ -176,7 +176,7 @@ body {
     -webkit-animation-duration: 0.3s;
     -moz-animation-duration: 0.3s;
     animation-duration: 0.3s;
-    /*overflow: hidden;*/
+    overflow: hidden;
 }
 
 /*--------------------------------------------------------------
@@ -787,10 +787,10 @@ video {
     width: 100%;
     height: 100%;
     object-fit: var(--video-object-fit);
+    cursor: pointer;
 }
 video:fullscreen {
-    /*object-fit: contain;*/
-    object-fit: cover;
+    object-fit: contain; /* cover; */
     border: var(--elem-border-color);
 }
 .video {
