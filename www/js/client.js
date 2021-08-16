@@ -151,8 +151,6 @@ let msgerCPCloseBtn;
 let msgerCPList;
 // chat room emoji picker
 let msgerEmojiPicker;
-let msgerEmojiHeader;
-let msgerCloseEmojiBtn;
 let emojiPicker;
 // my settings
 let mySettings;
@@ -271,8 +269,6 @@ function getHtmlElementsById() {
     msgerCPList = getId('msgerCPList');
     // chat room emoji picker
     msgerEmojiPicker = getId('msgerEmojiPicker');
-    msgerEmojiHeader = getId('msgerEmojiHeader');
-    msgerCloseEmojiBtn = getId('msgerCloseEmojiBtn');
     emojiPicker = getSl('emoji-picker');
     // my settings
     mySettings = getId('mySettings');
@@ -406,11 +402,6 @@ function setButtonsTitle() {
     });
     tippy(msgerSendBtn, {
         content: 'Send',
-    });
-
-    // emoji picker
-    tippy(msgerCloseEmojiBtn, {
-        content: 'Close emoji',
     });
 
     // settings
@@ -1846,31 +1837,18 @@ function setChatRoomBtn() {
  * Emoji picker chat room button click event
  */
 function setChatEmojiBtn() {
-    if (isMobileDevice) {
-        // mobile already have it
-        msgerEmojiBtn.style.display = 'none';
-    } else {
-        // make emoji picker draggable for desktop
-        dragElement(msgerEmojiPicker, msgerEmojiHeader);
+    msgerEmojiBtn.addEventListener('click', (e) => {
+        // prevent refresh page
+        e.preventDefault();
+        hideShowEmojiPicker();
+    });
 
-        msgerEmojiBtn.addEventListener('click', (e) => {
-            // prevent refresh page
-            e.preventDefault();
-            hideShowEmojiPicker();
-        });
-
-        msgerCloseEmojiBtn.addEventListener('click', (e) => {
-            // prevent refresh page
-            e.preventDefault();
-            hideShowEmojiPicker();
-        });
-
-        emojiPicker.addEventListener('emoji-click', (e) => {
-            //console.log(e.detail);
-            //console.log(e.detail.emoji.unicode);
-            msgerInput.value += e.detail.emoji.unicode;
-        });
-    }
+    emojiPicker.addEventListener('emoji-click', (e) => {
+        //console.log(e.detail);
+        //console.log(e.detail.emoji.unicode);
+        msgerInput.value += e.detail.emoji.unicode;
+        hideShowEmojiPicker();
+    });
 }
 
 /**
